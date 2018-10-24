@@ -81,9 +81,27 @@ input:not(input[type="checkbox"],input[type="radio"], textarea){
     height: 35px;
 }
 
-.btn-primary{
+.btn-success{
     background-color: #00838F;
     border-color: #00838F;
+}
+
+.btn-success:hover{
+    background-color: #00838F;
+    border-color: #00838F;
+    color: white;
+}
+
+
+.btn-outline-success{
+    border-color: #00838F;
+    color: #00838F;
+}
+
+.btn-outline-success:hover{
+    background-color: #00838F;
+    border-color: #00838F;
+    color: white;
 }
 
 .form-content .form-control:focus{
