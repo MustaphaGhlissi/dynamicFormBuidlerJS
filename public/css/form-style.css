@@ -12,7 +12,6 @@ body{
 
 .form-content{
     padding: 40px;
-    background: #fff;
     width: 100%;
     position: relative;
     -webkit-box-shadow:  0px 0px 1px #000;
@@ -23,11 +22,20 @@ body{
 .form-steps{
     display: flex;
     border-bottom: none;
+    align-items: center;
 }
 
-.form-steps li{
+.form-steps li.nav-separator{
     flex: 1;
-    text-align: center;
+}
+
+.step-separator{
+    border: 2px solid #CECECE;
+    width: 100%;
+}
+
+.step-separator.active{
+    border: 2px solid #00838F;
 }
 
 .form-steps-content{
@@ -36,39 +44,20 @@ body{
 }
 
 .nav-step{
-    -webkit-border-radius: 0px !important;
-    -moz-border-radius: 0px !important;
-    border-radius: 0px !important;
-    background-color: #3700B3;
-    color: white;
+    -webkit-border-radius: 48px !important;
+    -moz-border-radius: 48px !important;
+    border-radius: 48px !important;
+    background-color: #CECECE;
+    color: black;
     border: none !important;
-    border-top: 10px solid white !important;
-}
-
-.nav-step:hover{
-    color: white;
-    text-decoration: none;
-    -webkit-transition: all ease-in-out 150ms;
-    -moz-transition: all ease-in-out 150ms;
-    -ms-transition: all ease-in-out 150ms;
-    -o-transition: all ease-in-out 150ms;
-    transition: all ease-in-out 150ms;
+    display: inline-block;
+    width: auto;
 }
 
 .nav-step.active{
-    border: none;
     font-weight: bolder;
-    border-bottom: 10px solid #3700B3 !important;
-    border-top: 10px solid #3700B3 !important;
-}
-
-.nav-step:hover{
-    border: none;
-    background-color: transparent;
-    color: #000;
-    font-weight: bolder;
-    border-bottom: 10px solid #3700B3 !important;
-    border-top: 10px solid #3700B3 !important;
+    background-color: #00838F !important;
+    color: white !important;
 }
 
 .form-buttons{
@@ -80,11 +69,25 @@ body{
 
 .form-content .form-control{
     background-color: #EFEFEF;
-    border: none;
+    border: 2px solid #ECECEC;
+}
+
+label{
+    font-weight: bold;
+    font-size: 17px;
+}
+
+input:not(input[type="checkbox"],input[type="radio"], textarea){
+    height: 35px;
+}
+
+.btn-primary{
+    background-color: #00838F;
+    border-color: #00838F;
 }
 
 .form-content .form-control:focus{
-    border: 1px solid #3700B3;
+    border: 1px solid #00838F;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
@@ -100,7 +103,7 @@ body{
 
 .seperator{
     width: 50px;
-    border: 3px solid #3700B3;
+    border: 3px solid #00838F;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
@@ -140,9 +143,9 @@ body{
     -moz-border-radius: 24px;
     border-radius: 24px;
     content: ' ';
-    -webkit-box-shadow: inset 0px 0px 2px 2px #3700B3;
-    -moz-box-shadow: inset 0px 0px 2px 2px #3700B3;
-    box-shadow: inset 0px 0px 2px 2px #3700B3;
+    -webkit-box-shadow: inset 0px 0px 2px 2px #00838F;
+    -moz-box-shadow: inset 0px 0px 2px 2px #00838F;
+    box-shadow: inset 0px 0px 2px 2px #00838F;
 }
 
 .form-content .check-box-area label:before{
@@ -153,7 +156,7 @@ body{
 
 .form-content .radios input:checked + label:before, .form-content .check-box-area input:checked + label:before{
     content: '\2713';
-    background-color: #3700B3;
+    background-color: #00838F;
     color: #FFF;
 }
 .input-group-append .btn, input-group-prepend .btn, .input-group-text{

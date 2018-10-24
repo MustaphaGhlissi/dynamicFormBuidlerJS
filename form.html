@@ -21,29 +21,30 @@
         <div class="row">
             <div class="col-lg-8 offset-lg-2">
                 <div class="form">
-                    <div class="form-content">
+                    <div class="card form-content">
+                        <div class="card-body">
+                            <form action="">
+                                <ul class="nav nav-tabs form-steps">
 
-                        <form action="">
-                            <ul class="nav nav-tabs form-steps">
+                                </ul>
 
-                            </ul>
-
-                            <!-- Tab panes -->
-                            <div class="tab-content form-steps-content">
+                                <!-- Tab panes -->
+                                <div class="tab-content form-steps-content">
 
 
 
-                            </div>
+                                </div>
 
-                            <div class="form-buttons">
-                                <div class="row">
-                                    <div class="form-group col-12 text-right">
-                                        <button type="button" data-id="btn-next-0" class="btn btn-outline-success btn-intialize-next btn-next">Suivant
-                                            <i class="fa fa-chevron-circle-right"></i></button>
+                                <div class="form-buttons">
+                                    <div class="row">
+                                        <div class="form-group col-12 text-right">
+                                            <button type="button" data-id="btn-next-0" class="btn btn-outline-success btn-intialize-next btn-next">Suivant
+                                                <i class="fa fa-chevron-circle-right"></i></button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -81,17 +82,22 @@
 
                     sections.forEach(function (section, index) {
                         let step = '<li class="nav-item">',
-                        stepLink = '<a class="nav-link nav-step" data-toggle="tab" href="#step'+index+'" onclick="displayButtons('+index+', '+steps+')"> Etape '+(index + 1)+'  </a></li>',
+                        stepLink = '<span class="nav-link nav-step" data-step="'+index+'">'+(index + 1)+'  </span></li><li class="nav-item nav-separator"><hr class="step-separator" data-separator="'+index+'"/></li>',
                         stepTitle = '<div class="row"><div class="col-12"><h3 class="text-center step-title">'+(section.sectionTitle)+'</h3><hr class="seperator"/></div> </div> ',
                         stepContent = '<div id="step'+index+'" class="container tab-pane">'+stepTitle,
                         row = '<div class="row">';
 
 
-                        if(index === 0)
-                        {
-                            stepLink = '<a class="nav-link nav-step active show" data-toggle="tab" href="#step'+index+'" onclick="displayButtons('+index+', '+steps+')"> Etape '+(index + 1)+'  </a></li>';
+                        if(index === 0) {
+                            stepLink = '<span class="nav-link nav-step active" data-step="' + index + '">' + (index + 1) + '  </span></li><li class="nav-item nav-separator"><hr class="step-separator active" data-separator="' + index + '"/></li>';
                             stepContent = '<div id="step'+index+'" class="container tab-pane active show">'+stepTitle;
                         }
+                        else if(index === parseInt(steps) - 1)
+                        {
+                            stepLink = '<span class="nav-link nav-step" data-step="'+index+'">'+(index + 1)+'  </span></li>';
+                        }
+
+
 
 
                         step+= stepLink;
@@ -143,6 +149,11 @@
                                     if(sectionField.required){
                                         inputField += "required ";
                                     }
+
+                                    if(sectionField.multiple){
+                                        inputField += 'multiple ';
+                                    }
+
                                     inputField += "type='" + sectionField.type + "' id='" + sectionField.name + "'  name='" + sectionField.name + "' />";
 
                                     divField = '<div class="form-group col-lg-12">';
@@ -239,6 +250,11 @@
                                     if(sectionField.required){
                                         selectField += "required ";
                                     }
+
+                                    if(sectionField.multiple){
+                                        selectField += 'multiple ';
+                                    }
+
                                     selectField += "id='" + sectionField.name + "' name='" + sectionField.name + "'>";
                                     sectionField.options.forEach(function (option) {
                                         selectField += "<option value='" + option.value + "'>" + option.label + "</option>";
@@ -322,14 +338,17 @@
                 id = parseInt(id.substr((id.lastIndexOf('-'))+1,id.length));
                 next = id+1;
 
-                let link = $('a[href="#step'+id+'"]'),
-                 tabContent = $('#step'+id),
-                 nextLink = $('a[href="#step'+next+'"]'),
+                let tabContent = $('#step'+id),
+                 nextStep = $('span[data-step="'+next+'"]'),
+                 nextSeparator = $('hr[data-separator="'+next+'"]'),
                  nextTabContent = $('#step'+next);
-                link.removeClass('active show');
+
                 tabContent.removeClass('active show');
-                nextLink.addClass('active show');
+
+                nextStep.addClass('active');
+                nextSeparator.addClass('active');
                 nextTabContent.addClass('active show');
+
                 displayButtons(next, steps);
             } );
 
@@ -339,14 +358,15 @@
                 id = parseInt(id.substr((id.lastIndexOf('-'))+1,id.length));
                 prev = id-1;
 
-                let link = $('a[href="#step'+id+'"]'),
+                let step = $('span[data-step="'+id+'"]'),
                     tabContent = $('#step'+id),
-                    prevLink = $('a[href="#step'+prev+'"]'),
+                    prevStep = $('hr[data-separator="'+prev+'"]'),
+                    currentSeparator = $('hr[data-separator="'+id+'"]'),
                     prevTabContent = $('#step'+prev);
 
-                link.removeClass('active show');
+                step.removeClass('active');
+                currentSeparator.removeClass('active');
                 tabContent.removeClass('active show');
-                prevLink.addClass('active show');
                 prevTabContent.addClass('active show');
                 displayButtons(prev, steps);
             } );
