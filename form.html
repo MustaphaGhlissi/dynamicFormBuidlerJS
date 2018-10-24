@@ -1,0 +1,466 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>
+            Form builder
+        </title>
+
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="public/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="public/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+        <link rel="stylesheet" href="public/bootstrap-timepicker/css/bootstrap-timepicker.min.css">
+        <link rel="stylesheet" href="public/css/intlTelInput.min.css">
+        <link rel="stylesheet" href="public/css/form-style.css">
+    </head>
+
+
+    <body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="form">
+                    <div class="form-content">
+
+                        <form action="">
+                            <ul class="nav nav-tabs form-steps">
+
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content form-steps-content">
+
+
+
+                            </div>
+
+                            <div class="form-buttons">
+                                <div class="row">
+                                    <div class="form-group col-12 text-right">
+                                        <button type="button" data-id="btn-next-0" class="btn btn-outline-success btn-intialize-next btn-next">Suivant
+                                            <i class="fa fa-chevron-circle-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="public/js/jquery.min.js"></script>
+    <script src="public/bootstrap/js/bootstrap.min.js"></script>
+    <script src="public/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="public/bootstrap-datepicker/locales/bootstrap-datepicker.fr.min.js"></script>
+    <script src="public/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
+    <!--<script src="public/js/intlTelInput-jquery.min.js"></script>-->
+    <script src="public/js/intlTelInput.min.js"></script>
+    <script src="public/js/utils.js"></script>
+    <script src="public/js/countries.js"></script>
+
+
+
+
+    <script>
+        $(document).ready(function(){
+            $.ajax({
+                url: "formconfig.php",
+                success: function(result){
+                    let formData = JSON.parse(result),
+                        steps = formData.steps,
+                        sections = formData.sections,
+                        formURL = formData.url;
+
+                    $('.form-content').find('form').attr('action', formURL);
+
+
+                    $('.btn-intialize-next').attr('data-steps', steps);
+
+                    sections.forEach(function (section, index) {
+                        let step = '<li class="nav-item">',
+                        stepLink = '<a class="nav-link nav-step" data-toggle="tab" href="#step'+index+'" onclick="displayButtons('+index+', '+steps+')"> Etape '+(index + 1)+'  </a></li>',
+                        stepTitle = '<div class="row"><div class="col-12"><h3 class="text-center step-title">'+(section.sectionTitle)+'</h3><hr class="seperator"/></div> </div> ',
+                        stepContent = '<div id="step'+index+'" class="container tab-pane">'+stepTitle,
+                        row = '<div class="row">';
+
+
+                        if(index === 0)
+                        {
+                            stepLink = '<a class="nav-link nav-step active show" data-toggle="tab" href="#step'+index+'" onclick="displayButtons('+index+', '+steps+')"> Etape '+(index + 1)+'  </a></li>';
+                            stepContent = '<div id="step'+index+'" class="container tab-pane active show">'+stepTitle;
+                        }
+
+
+                        step+= stepLink;
+                        $('form').children('.nav-tabs').append(step);
+
+
+                        section.sectionContent.forEach(function (sectionField, indexField) {
+                            let divField = '<div class="form-group col-lg-6">';
+                            let inputGroup = '<div class="input-group mb-3">';
+                            let labelField = "<label for='"+sectionField.name + indexField+"'>"+sectionField.label+"</label>";
+                            let inputField = "<input class='form-control' ",
+                                textField = "<textarea class='form-control' ",
+                                selectField = "<select class='form-control' ";
+
+                            divField += labelField;
+
+                            switch(sectionField.type) {
+                                case 'text':
+                                    if(sectionField.required){
+                                        inputField += "required ";
+                                    }
+                                    inputField += "type='" + sectionField.type + "' id='" + sectionField.name + "'  name='" + sectionField.name + "' placeholder='" + sectionField.placeholder + "' />";
+                                    divField += inputField;
+                                    break;
+
+                                case 'tel':
+                                    if(sectionField.required){
+                                        inputField += "required ";
+                                    }
+                                    inputField += "type='text' id='" + sectionField.name + "' data-target='phone'  name='" + sectionField.name + "' placeholder='" + sectionField.placeholder + "' />";
+
+                                    inputGroup += inputField + '  <div class="input-group-append">' +
+                                        ' <span class="input-group-text"><i class="fa fa-phone"></i> </span>' +
+                                        ' </div></div>';
+
+                                    divField += inputGroup;
+
+                                    break;
+
+                                case 'number':
+                                    if(sectionField.required){
+                                        inputField += "required ";
+                                    }
+                                    inputField += "type='" + sectionField.type + "' id='" + sectionField.name + "'  name='" + sectionField.name + "' placeholder='" + sectionField.placeholder + "' />";
+                                    divField += inputField;
+                                    break;
+
+                                case 'file':
+                                    if(sectionField.required){
+                                        inputField += "required ";
+                                    }
+                                    inputField += "type='" + sectionField.type + "' id='" + sectionField.name + "'  name='" + sectionField.name + "' />";
+
+                                    divField = '<div class="form-group col-lg-12">';
+                                    divField += labelField;
+                                    divField += inputField;
+                                    break;
+
+                                case 'date':
+                                    if(sectionField.required){
+                                        inputField += "required ";
+                                    }
+                                    inputField += "type='text' id='" + sectionField.name + "' data-target='date'  name='" + sectionField.name + "'  placeholder='" + sectionField.placeholder + "' />";
+
+                                    inputGroup += inputField + '  <div class="input-group-append">' +
+                                        ' <span class="input-group-text"><i class="fa fa-calendar"></i> </span>' +
+                                        ' </div></div>';
+                                    divField += inputGroup;
+                                    break;
+
+                                case 'time':
+                                    if(sectionField.required){
+                                        inputField += "required ";
+                                    }
+                                    inputField += "type='text' id='" + sectionField.name + "' data-target='time'  name='" + sectionField.name + "'  placeholder='" + sectionField.placeholder + "' />";
+
+                                    inputGroup += inputField + '  <div class="input-group-append">' +
+                                        ' <span class="input-group-text"><i class="fa fa-clock-o"></i> </span>' +
+                                        ' </div></div>';
+                                    divField += inputGroup;
+                                    break;
+
+                                case 'email':
+                                    divField = '<div class="form-group col-lg-12">';
+                                    if(sectionField.required){
+                                        inputField += "required ";
+                                    }
+
+                                    if(sectionField.multiple){
+                                        divField = '<div class="form-group col-lg-12" data-multiple="'+index + indexField+'" data-order="1">';
+
+                                        inputField += ' name=' + sectionField.name + '[] ';
+                                    }
+                                    else
+                                    {
+                                        inputField += ' name=' + sectionField.name;
+                                    }
+
+                                    inputField += "type='" + sectionField.type + "' id='" + sectionField.name + indexField + "' placeholder='" + sectionField.placeholder + "' />";
+
+                                    inputGroup += inputField + '  <div class="input-group-append">' +
+                                        ' <div class="btn-group"><button type="button" class="btn btn-outline-success btn-addField" data-id="'+index + indexField+ '" data-order="1"><i class="fa fa-plus-circle"></i> </button>'+
+                                        '</div></div></div>';
+
+                                    divField += labelField;
+                                    divField += inputGroup;
+                                    break;
+
+                                case 'password':
+                                    if(sectionField.required){
+                                        inputField += "required ";
+                                    }
+                                    inputField += "type='" + sectionField.type + "' id='" + sectionField.name + "'  name='" + sectionField.name + "' placeholder='" + sectionField.placeholder + "' />";
+                                    inputGroup += inputField + '  <div class="input-group-append">' +
+                                        ' <button type="button" class="btn btn-outline-secondary btn-password"><i class="fa fa-eye"></i> </button>' +
+                                        ' </div></div>';
+                                    divField = '<div class="form-group col-lg-12">';
+                                    divField += labelField;
+                                    divField += inputGroup;
+                                    break;
+
+                                case 'checkbox':
+                                    labelField = "<label for='"+sectionField.name+"'>"+sectionField.label+"</label>";
+                                    inputField = "<input type='" + sectionField.type + "' id='" + sectionField.name + "'  name='" + sectionField.name +"'";
+                                    if(sectionField.required){
+                                        inputField += "required ";
+                                    }
+                                    inputField += " />";
+
+                                    divField = '<div class="form-group col-lg-12"><div class="check-box-area">';
+                                    divField +=  inputField + labelField +'</div>';
+                                    break;
+
+                                case 'textarea':
+                                    if(sectionField.required){
+                                        textField += "required ";
+                                    }
+                                    textField += "rows='" + sectionField.rows + "' id='" + sectionField.name + "' name='" + sectionField.name + "' placeholder='" + sectionField.placeholder + "'></textarea>";
+                                    divField = '<div class="form-group col-lg-12">';
+                                    divField += labelField;
+                                    divField += textField;
+                                    break;
+
+                                case 'select':
+                                    if(sectionField.required){
+                                        selectField += "required ";
+                                    }
+                                    selectField += "id='" + sectionField.name + "' name='" + sectionField.name + "'>";
+                                    sectionField.options.forEach(function (option) {
+                                        selectField += "<option value='" + option.value + "'>" + option.label + "</option>";
+                                    });
+                                    selectField += "</select>";
+                                    divField += selectField;
+
+                                    break;
+
+                                case 'country':
+                                    if(sectionField.required){
+                                        selectField += "required ";
+                                    }
+                                    selectField += "id='" + sectionField.name + "' name='" + sectionField.name + "'>";
+                                    countries.forEach(function (country) {
+                                        selectField += "<option value='" + country + "'>" + country + "</option>";
+                                    });
+                                    selectField += "</select>";
+                                    divField += selectField;
+
+                                    break;
+
+                                case 'radio':
+                                    let radios = '<div class="radios">', radioItem, label;
+                                    sectionField.options.forEach(function (option, index) {
+                                        radioItem = '<div class="radio-item">';
+                                        label = '<label for="' + sectionField.name + '' + index + '">'+option.label+'</label>';
+                                        inputField = "<input type='" + sectionField.type + "' id='" + sectionField.name + "" + index + "' value='" + option.value + "'  name=" + sectionField.name;
+
+                                        if(sectionField.required){
+                                            inputField += " required ";
+                                        }
+
+                                        if(option.checked){
+                                            inputField += " checked ";
+                                        }
+
+                                        inputField += ' />';
+
+                                        radioItem +=  inputField + label + '</div>';
+                                        radios += radioItem;
+                                    });
+                                    radios += '</div>';
+                                    divField = '<div class="form-group col-lg-12">';
+                                    divField += labelField;
+                                    divField += radios;
+
+                                    break;
+                            }
+
+                            divField +='</div>';
+                            row+=divField;
+                        });
+                        stepContent += row;
+                        $('form').find('.tab-content').append(stepContent);
+
+
+
+                    });
+                }
+            });
+
+
+            $(document).on('click', '.btn-password', function () {
+                $(this).children('i').toggleClass('fa-eye').toggleClass('fa-eye-slash');
+
+                if($(this).parent().prev().attr('type') === "text")
+                {
+                    $(this).parent().prev().attr('type', 'password');
+
+                }
+                else
+                {
+                    $(this).parent().prev().attr('type', 'text');
+                }
+            });
+
+            $(document).on('click', '.btn-next', function () {
+
+                let id = $(this).data('id'), next, steps = $(this).data('steps');
+                id = parseInt(id.substr((id.lastIndexOf('-'))+1,id.length));
+                next = id+1;
+
+                let link = $('a[href="#step'+id+'"]'),
+                 tabContent = $('#step'+id),
+                 nextLink = $('a[href="#step'+next+'"]'),
+                 nextTabContent = $('#step'+next);
+                link.removeClass('active show');
+                tabContent.removeClass('active show');
+                nextLink.addClass('active show');
+                nextTabContent.addClass('active show');
+                displayButtons(next, steps);
+            } );
+
+            $(document).on('click', '.btn-prev', function () {
+
+                let id = $(this).data('id'), prev, steps = $(this).data('steps');
+                id = parseInt(id.substr((id.lastIndexOf('-'))+1,id.length));
+                prev = id-1;
+
+                let link = $('a[href="#step'+id+'"]'),
+                    tabContent = $('#step'+id),
+                    prevLink = $('a[href="#step'+prev+'"]'),
+                    prevTabContent = $('#step'+prev);
+
+                link.removeClass('active show');
+                tabContent.removeClass('active show');
+                prevLink.addClass('active show');
+                prevTabContent.addClass('active show');
+                displayButtons(prev, steps);
+            } );
+
+            $(document).on('click', '.btn-submit-form', function () {
+
+                alert('submitting ...');
+
+            } );
+
+            $(document).on('click', '.btn-addField', function () {
+
+                let ident = $(this).data('id'),
+                    order = $(this).data('order'),
+                    lastItem = $('div[data-multiple="'+ident+'"][data-order="'+order+'"]'),
+                    removeButton,
+                    nextItem = lastItem;
+
+                nextItem.attr('data-order', (parseInt(order) + 1));
+                nextItem.find('.btn-addField').attr('data-order', (parseInt(order) + 1));
+
+                if( parseInt(order) + 1 > 1 )
+                {
+                    removeButton = '<button type="button" class="btn btn-outline-danger btn-removeField"  data-id="'+ident+ '" data-order="'+(parseInt(order) + 1)+'"><i class="fa fa-minus-circle"></i> </button>';
+                    nextItem.find('.btn-group').children('.btn-removeField').remove();
+                    nextItem.find('.btn-group').append(removeButton);
+                }
+
+                lastItem.after(nextItem[0].outerHTML);
+
+                lastItem.attr('data-order', order);
+                lastItem.find('.btn-removeField').remove();
+                $(this).remove();
+            });
+
+            $(document).on('click', '.btn-removeField', function () {
+
+                let ident = $(this).data('id'),
+                order = $(this).data('order'),
+                lastItem = $('div[data-multiple="'+ident+'"][data-order="'+order+'"]'),
+                removeButton,
+                addButton = '<button type="button" class="btn btn-outline-success btn-addField" data-id="'+ident+'" data-order="'+(parseInt(order) - 1)+'"><i class="fa fa-plus-circle"></i> </button>',
+                prevItem = lastItem.prev();
+
+
+                prevItem.find('.btn-group').append(addButton);
+                if( parseInt(order) - 1 > 1 )
+                {
+                    removeButton = '<button type="button" class="btn btn-outline-danger btn-removeField" data-id="'+ident+ '" data-order="'+(parseInt(order) - 1)+'"><i class="fa fa-minus-circle"></i> </button>';
+                    prevItem.find('.btn-group').append(removeButton);
+                }
+
+                lastItem.remove();
+                console.log('order: '+order);
+            });
+
+            $(document).on('focus', 'input[data-target="date"]', function () {
+                $(this).datepicker({
+                    autoclose: true,
+                    language: "fr"
+                });
+            });
+
+            $(document).on('focus', 'input[data-target="time"]', function () {
+                $(this).timepicker({
+                    showMeridian: false,
+                    icons: {
+                        up: 'fa fa-chevron-up',
+                        down: 'fa fa-chevron-down'
+                    }
+                });
+            });
+
+        });
+
+
+
+        function displayButtons(step, length){
+            let formButtons;
+
+            if(step < length - 1  )
+            {
+                formButtons = '<div class="row">' ;
+
+                if(step > 0)
+                {
+                    formButtons += '<div class="form-group col-sm-6">' +
+                        '          <button type="button" data-id="btn-prev-'+step+'" data-steps="'+length+'" class="btn btn-outline-secondary btn-prev"><i class="fa fa-chevron-circle-left"></i> Précedent</button>' +
+                        '      </div><div class="form-group col-sm-6 text-right">' ;
+                }
+                else
+                {
+                    formButtons += '<div class="form-group col-sm-12 text-right">';
+                }
+
+                formButtons += ' <button type="button" data-id="btn-next-'+step+'" data-steps="'+length+'" class="btn btn-outline-success btn-next">Suivant <i class="fa fa-chevron-circle-right"></i></button>' +
+                    '           </div>' +
+                    '     </div>';
+
+            }
+            else
+            {
+                formButtons = '<div class="row">' +
+                    '     <div class="form-group col-sm-6">' +
+                    '          <button type="button" data-id="btn-prev-'+step+'" data-steps="'+length+'" class="btn btn-outline-secondary btn-prev"><i class="fa fa-chevron-circle-left"></i> Précedent</button>' +
+                    '      </div>' +
+                    '      <div class="form-group col-sm-6 text-right">' +
+                    '          <button class="btn btn-primary btn-submit-form">Envoyer</button>' +
+                    '      </div>' +
+                    '     </div>'
+            }
+            $('.form-buttons').html(formButtons);
+        }
+
+    </script>
+    </body>
+</html>
