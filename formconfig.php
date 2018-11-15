@@ -7,99 +7,142 @@
  */
 
 
+/*
+ *
+ * url : l'url de formulaire
+ * steps: Nombre d'étapes
+ * title: Titre global de formulaire
+ * sections: tableau des différentes étapes
+ *
+ * Pour chaque étape ona :
+ * sectionTitle: "titre de l'étape en cours
+ * grouped: l'étape contient des blocks groupés ou non
+ * groupedBLocks: nombre des blocks groupés par étape
+ * blocksTitle: Le titre de block : exemple Fiche praticien
+ * maxBlocks: Tableau de taille groupedBlocks designant le nombre de copies de chaque block (Exemple 2 copie deux groupes FIches praticiens, 3 fiches medecins etc ..)
+ * nextStep: Désigne l'étape suivante à atteindre s'il s'agit d'un saut de page
+ *
+ *
+ *
+ *
+ * Liste des attributs possibles
+ * Champs de saisie : label, type , name, placeholder, required (True | False), grouped (True | False : plusieurs copies), multiple (True | False)
+ * Type : text, textarea, select, email, tel , password, paragraph, radio, checkbox, file (avec un attribut fileType qui doit etre soit image soit un pdf)
+ *
+ * Checkbox, Radio & Select ont un attribut supplémentaires "options" pour les différents choix dedans
+*  Les options ont des sous attributs : label , value, checked (True | False : Si radio ou checkbox), selected (pour select) , pageBreak (True | False : Si le choix déclenche un saut de page)
+ *
+ * Pour les uploads d'image il faut fournir deux attributs width & height de l'image
+ *
+ *
+ * */
+
 $form = array(
     'url' => 'https://www.google.com', // L'url vers lequel on envoye le formulaire
-    'steps' => 4, // Nombre d'étapes
+    'steps' => 2, // Nombre d'étapes
+    'title' => 'Questionnaire d\'installation ALAXIONE',
     'sections' => [ // Les étapes de formulaire
         [
-            'sectionTitle' => 'Check boxes & Textarea',
-            'sectionContent' => [        // Contenu de l'atape
-                [
-                    "label" => "Type de compte", 'type' => 'radio', 'name' => 'accountType', 'required' => true,
-                    "options" => [
-                        [
-                            'label' => 'Personnel', 'value' => 'personnel', 'checked' => true
-                        ],
-                        [
-                            'label' => 'Compte entreprise', 'value' => 'professionnel', 'checked' => false
-                        ]
-                    ]
+            'sectionTitle' => 'Titre de la section',
+            'grouped' => false, // False si y a pas des champs groupés sinon True
+            'groupedBlocks' => 0, // 0 si grouped false sinon le nombre des différents blocks par section (Fiche client, fiche admin etc ... dans la meme section)
+            'blocksTitle' => '', // Titre du block
+            'maxBlocks' => [] , // Tableau de  taille groupedBlocks Nombre maximum qu'on peut avoir pour chaque block (Créer 3 fiches praticiens, 2 fiches admins, 5 fiches patients etc ... dans ce cas le groupedBlocks est 3 et le maxBlocks devient [3,2,5])
+            'nextStep' => -1, // -1 par défault , sinon l'étape suivante doit etre présicer (Là on parle de saut de page)
+            'sectionContent' => [
+                [        // Contenu de l'étape
+                    'type' => 'paragraph', 'content' => 'Nous allons vous accompagner pour compléter les éléments qui nous sont indispensables pour votre bonne installation. '
                 ],
-                [
-                    'label' => 'Description', 'type'=>'textarea', 'required' => false, 'name' => 'description', 'rows'=>12, 'placeholder' => 'Décrivez votre activité dans quelques lignes ici'
-                ]
-            ]
-        ],
-        [
-            'sectionTitle' => 'Input fields , upload files, and multiple inputs',   // Titre de l'étape
-            'sectionContent' => [       // Contenu de l'atape
-                [
-                    'label' => 'Photo de profil', 'type' => 'file', 'name' => 'photo', 'multiple' => true, 'required' => false
-                ],
-                [
-                    'label' => 'Nom', 'type' => 'text', 'name' => 'firstName', 'placeholder' => '', 'required' => true
-                ],
-                [
-                    'label' => 'Prénom', 'type' => 'text', 'name' => 'lastName', 'placeholder' => '', 'required' => true
-                ],
-                [
-                    'label' => 'Email', 'type' => 'email', 'name' => 'email', 'placeholder' => '', 'multiple' => true, 'required' => true
-                ],
-                [
-                    'label' => 'Nom d\'utilisateur', 'type' => 'text', 'name' => 'username', 'placeholder' => '', 'required' => true
-                ],
-                [
-                    'label' => 'Genre', 'type' => 'select', 'name' => 'sexe', 'required' => true,
-                    'options' => [
-                        ['label' => 'Homme', 'value' => 'homme'],
-                        ['label' => 'Femme', 'value' => 'femme']
-                    ]
-                ],
-                [
-                    'label' => 'Pays', 'type' => 'country', 'name' => 'country', 'placeholder' => '', 'required' => false
-                ],
-                [
-                    'label' => 'Ville', 'type' => 'text', 'name' => 'city', 'placeholder' => '', 'required' => false
-                ],
-                [
-                    'label' => 'Tél', 'type' => 'tel', 'name' => 'phone', 'placeholder' => '', 'required' => false
-                ],
-                [
-                    'label' => 'Date de naissance', 'type' => 'date', 'name' => 'birthDate', 'placeholder' => 'JJ/MM/AAAA', 'required' => true
-                ],
-                [
-                    'label' => 'Heure de naissance', 'type' => 'time', 'name' => 'birthTime', 'placeholder' => 'HH:mm', 'required' => true
-                ],
-                [
-                    'label' => 'Age', 'type' => 'number', 'name' => 'age', 'placeholder' => '00', 'required' => true
-                ]
-
-            ]
-        ],
-        [
-            'sectionTitle' => 'Password example',   // Titre de l'étape
-            'sectionContent' => [        // Contenu de l'atape
                 [
                     'label' => 'Current password', 'type' => 'password', 'name' => 'currentPassword', 'placeholder' => '', 'required' => true
                 ],
                 [
-                    'label' => 'New password', 'type' => 'password', 'name' => 'newPassword', 'placeholder' => '', 'required' => true
+                    'label' => 'Forme juridique', 'type' => 'text', 'name' => 'jurid', 'placeholder' => '', 'required' => false
                 ],
                 [
-                    'label' => 'Confirm password', 'type' => 'password', 'name' => 'confirmNewPassword', 'placeholder' => '', 'required' => true
+                    'label' => 'Tel Fixe', 'type' => 'tel', 'name' => 'phone', 'placeholder' => '', 'required' => false
+                ],
+                [
+                    'label' => 'Mail', 'type' => 'email', 'name' => 'mail', 'placeholder' => '', 'required' => false, 'grouped' => true
+                ],
+                [
+                    'label' => 'Forme juridique', 'type' => 'file', 'fileType'=>'image', 'name' => 'jurid', 'placeholder' => '', 'required' => false
+                ],
+                [
+                    'label' => 'Lequel ?', 'type' => 'select', 'name' => 'rdvLine', 'required' => false,
+                    'options' => [
+                        ['label' => 'Doctolib', 'value' => 'doctolib'],
+                        ['label' => 'MonDocteur', 'value' => 'mondocteur'],
+                        ['label' => 'Autre', 'value' => 'autre']
+                    ]
+                ],
+                [
+                    "label" => "Mode de règlement", 'type' => 'checkbox', 'name' => 'rules', 'required' => false,
+                    "options" => [
+                        [
+                            'label' => 'Cheque', 'value' => 'cheque', 'checked' => false
+                        ],
+                        [
+                            'label' => 'Espèce', 'value' => 'espèce', 'checked' => false
+                        ],
+                        [
+                            'label' => 'Carte bleue', 'value' => 'carte bleue', 'checked' => false
+                        ],
+                        [
+                            'label' => 'Carte Vitale', 'value' => 'carte vitale', 'checked' => false
+                        ]
+                    ]
+                ],
+                [
+                    'label' => 'Date de résiliation prévue', 'type' => 'date', 'name' => 'resiliationDate', 'placeholder' => '', 'required' => false
+                ],
+                [
+                    'label' => 'Avez-vous un site internet ?', 'type' => 'radio', 'name' => 'website', 'required' => false,
+                    'options' => [
+                        ['label' => 'Oui', 'value' => 'oui', 'checked' => true, 'pageBreak' => false],
+                        ['label' => 'Non', 'value' => 'non', 'pageBreak' => true] // Si le choix est Non là il y aura le saut de page sinon on procède de manière normale
+                    ]
                 ]
             ]
-        ]
-        ,
+        ],
         [
-            'sectionTitle' => 'Checkbox example',    // Titre de l'étape
-            'sectionContent' => [           // Contenu de l'atape
-                [
-                    'label' => 'J\ai lu et j\'approuve les conditions générales d\'utilisations', 'type' => 'checkbox', 'name' => 'terms', 'required' => true
+            'sectionTitle' => 'L\'équipe administrative',
+            'sectionDescription' => '',
+            'grouped' => true,
+            'groupedBlocks' => 1,
+            'blocksTitle' => 'Administratif',
+            'secondaryBlocksTitle' => '',
+            'maxBlocks' => [] ,
+            'nextStep' => -1, // -1 auto , sinon l'étape suivante
+            'sectionContent' => [
+                [        // Contenu de l'étape
+                    [
+                        'label' => 'Fonction', 'type' => 'text', 'name' => 'function', 'placeholder' => '', 'required' => true
+                    ],
+                    [
+                        'label' => 'Civilité', 'type' => 'select', 'name' => 'civility', 'required' => true,
+                        'options' => [
+                            ['label' => 'Mme', 'value' => 'professeur'],
+                            ['label' => 'M.', 'value' => 'docteur']
+                        ]
+                    ],
+                    [
+                        'label' => 'Nom', 'type' => 'text', 'name' => 'lastName', 'placeholder' => '', 'required' => false
+                    ],
+                    [
+                        'label' => 'Prénom', 'type' => 'text', 'name' => 'firstName', 'placeholder' => '', 'required' => false
+                    ],
+                    [
+                        'label' => 'Mail', 'type' => 'email', 'name' => 'email', 'placeholder' => '', 'required' => false
+                    ],
+                    [
+                        'label' => 'Mot de passe souhaité', 'type' => 'password', 'name' => 'password', 'placeholder' => '', 'required' => false
+                    ]
                 ]
             ]
         ]
     ]
+
 );
 
 exit (json_encode($form));
