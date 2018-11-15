@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     $.ajax({
-        url: "formconfig2.php",
+        url: "formconfig.php",
         success: function (result) {
             let formData = JSON.parse(result),
                 steps = formData.steps,
